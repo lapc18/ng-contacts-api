@@ -8,6 +8,8 @@ public class UserDto extends BaseDto {
 
     private String email;
 
+    private UserDetailsDto details;
+
 
 
 }
