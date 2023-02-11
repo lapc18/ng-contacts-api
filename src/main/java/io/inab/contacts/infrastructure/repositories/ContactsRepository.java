@@ -8,7 +8,7 @@ import java.util.List;
 public interface ContactsRepository extends JpaRepository<Contact, Integer> {
     List<Contact> findByFirstName(String firstName);
     List<Contact> findByLastName(String lastName);
-    List<Contact> findByEmail(String email);
+    List<Contact> findByEmails(String emails);
     List<Contact> findByCompany(String company);
-    List<Contact> findByNickname(String nickname);
+    List<Contact> findByNickName(String nickName);
 }

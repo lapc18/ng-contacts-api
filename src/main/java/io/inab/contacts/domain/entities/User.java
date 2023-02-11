@@ -2,13 +2,12 @@ package io.inab.contacts.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.inab.contacts.core.abstracts.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 import java.util.List;
 
+@Entity
+@Table(name = "users")
 public class User extends BaseEntity {
 
     @Column(unique = true, nullable = false)
