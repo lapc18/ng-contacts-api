@@ -12,8 +12,8 @@ import java.util.HashMap;
 
 
 @RestController
-@RequestMapping("/api/users")
-public class UsersController {
+@RequestMapping("/api/contacts")
+public class ContactsController {
 
     @Autowired
     private UsersService service;
