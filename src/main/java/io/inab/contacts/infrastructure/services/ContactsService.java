@@ -2,54 +2,59 @@ package io.inab.contacts.infrastructure.services;
 
 import io.inab.contacts.core.interfaces.IService;
 import io.inab.contacts.core.models.PageResponse;
+import io.inab.contacts.domain.dtos.ContactDto;
 import io.inab.contacts.domain.dtos.UserDto;
+import io.inab.contacts.domain.entities.Contact;
 import io.inab.contacts.domain.entities.User;
+import io.inab.contacts.infrastructure.repositories.ContactsRepository;
 import io.inab.contacts.infrastructure.repositories.UsersRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class UsersService implements IService<UserDto> {
+@Service
+public class ContactsService implements IService<ContactDto> {
 
     @Autowired
-    private UsersRepository repository;
+    private ContactsRepository repository;
 
     @Autowired
     private ModelMapper mapper;
 
     /**
-     * @param dto UserDto
-     * @return UserDto
+     * @param dto ContactDto
+     * @return ContactDto
      * @throws Exception
      */
     @Override
-    public UserDto create(UserDto dto) throws Exception {
+    public ContactDto create(ContactDto dto) throws Exception {
         if(dto == null) throw new Exception("Your entity can not be empty!");
 
         try {
-            var entity = this.mapper.map(dto, User.class);
-            return this.mapper.map(this.repository.save(entity), UserDto.class);
+            var entity = this.mapper.map(dto, Contact.class);
+            return this.mapper.map(this.repository.save(entity), ContactDto.class);
         } catch (Exception e) {
             throw new Exception("An exception has occurred saving your entity", e);
         }
     }
 
     /**
-     * @param dto UserDto
-     * @return UserDto
+     * @param dto ContactDto
+     * @return ContactDto
      * @throws Exception
      */
     @Override
-    public UserDto update(UserDto dto) throws Exception {
+    public ContactDto update(ContactDto dto) throws Exception {
         if(dto == null) throw new Exception("Your entity can not be empty!");
         if(this.repository.findById(dto.getId()).isEmpty()) throw new Exception("No entity found with provided ID!");
 
         try {
-            var entity = this.mapper.map(dto, User.class);
-            return this.mapper.map(this.repository.save(entity), UserDto.class);
+            var entity = this.mapper.map(dto, Contact.class);
+            return this.mapper.map(this.repository.save(entity), ContactDto.class);
         } catch (Exception e) {
             throw new Exception("An exception has occurred saving the User.", e);
         }
@@ -79,7 +84,7 @@ public class UsersService implements IService<UserDto> {
      * @throws Exception
      */
     @Override
-    public PageResponse<UserDto> getAll(Pageable pageable) throws Exception {
+    public PageResponse<ContactDto> getAll(Pageable pageable) throws Exception {
         if(pageable == null) throw new Exception("Pageable can not be empty!");
 
         try {
@@ -87,7 +92,7 @@ public class UsersService implements IService<UserDto> {
             var list = data.getContent()
                     .stream()
                     .filter((entity -> !entity.isDeleted()))
-                    .map((entity -> this.mapper.map(entity, UserDto.class)))
+                    .map((entity -> this.mapper.map(entity, ContactDto.class)))
                     .collect(Collectors.toList());
             return new PageResponse<>(list, data.getNumber(), data.getTotalElements(), data.getTotalPages());
         } catch (Exception e) {
@@ -101,14 +106,14 @@ public class UsersService implements IService<UserDto> {
      * @throws Exception
      */
     @Override
-    public UserDto getById(int id) throws Exception {
+    public ContactDto getById(int id) throws Exception {
         if(id == 0) throw new Exception("Entity ID can not be empty!");
 
         try {
             Optional<?> product = this.repository.findById(id);
             if(product.isEmpty()) return null;
 
-            return this.mapper.map(product.get(), UserDto.class);
+            return this.mapper.map(product.get(), ContactDto.class);
         } catch (Exception e) {
             throw new Exception("An exception has occurred finding your Entity.", e);
         }

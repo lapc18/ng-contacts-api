@@ -8,10 +8,13 @@ import io.inab.contacts.infrastructure.repositories.UsersRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class UsersService implements IService<UserDto> {
 
     @Autowired
@@ -113,4 +116,88 @@ public class UsersService implements IService<UserDto> {
             throw new Exception("An exception has occurred finding your Entity.", e);
         }
     }
+
+    /**
+     * @param username
+     * @return UserDto
+     * @throws Exception
+     */
+    public UserDto getByUsername(String username) throws Exception {
+        if(username.isEmpty()) throw new Exception("Username can not be empty!");
+
+        try {
+            var user = this.repository.findByUsername(username);
+            if(user == null) return null;
+
+            return this.mapper.map(user, UserDto.class);
+        } catch (Exception e) {
+            throw new Exception("An exception has occurred finding your Entity.", e);
+        }
+    }
+
+    /**
+     * @param email
+     * @return UserDto
+     * @throws Exception
+     */
+    public UserDto getByEmail(String email) throws Exception {
+        if(email.isEmpty()) throw new Exception("Email can not be empty!");
+
+        try {
+            var user = this.repository.findByEmail(email);
+            if(user == null) return null;
+
+            return this.mapper.map(user, UserDto.class);
+        } catch (Exception e) {
+            throw new Exception("An exception has occurred finding your Entity.", e);
+        }
+    }
+
+    /**
+     * @param email
+     * @return boolean
+     * @throws Exception
+     */
+    public boolean validateCredentialsByEmail(String email, String pwd) throws Exception {
+        if(email.isEmpty() || pwd.isEmpty()) return false;
+        try {
+            var user = this.repository.findByEmail(email);
+            return Objects.equals(user.getPwd(), pwd);
+        } catch (Exception e) {
+            throw new Exception("An exception has occurred validating your credentials.", e);
+        }
+    }
+
+    /**
+     * @param username
+     * @return boolean
+     * @throws Exception
+     */
+    public boolean validateCredentialsByUsername(String username, String pwd) throws Exception {
+        if(username.isEmpty() || pwd.isEmpty()) return false;
+        try {
+            var user = this.repository.findByUsername(username);
+            return Objects.equals(user.getPwd(), pwd);
+        } catch (Exception e) {
+            throw new Exception("An exception has occurred validating your credentials.", e);
+        }
+    }
+
+    /**
+     * @param dto UserDto
+     * @return UserDto
+     * @throws Exception
+     */
+    public UserDto register(UserDto dto, String pwd) throws Exception {
+        if(dto == null || pwd == null) throw new Exception("Your entity/password can not be empty!");
+
+        try {
+            var entity = this.mapper.map(dto, User.class);
+            entity.setPwd(pwd);
+            return this.mapper.map(this.repository.save(entity), UserDto.class);
+        } catch (Exception e) {
+            throw new Exception("An exception has occurred saving your entity", e);
+        }
+    }
+
 }
