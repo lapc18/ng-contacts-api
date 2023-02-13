@@ -17,20 +17,19 @@ public class AuthService implements IAuthService {
      * @return boolean
      */
     @Override
-    public boolean register(Login details) throws Exception {
-        if(!details.isValidPwd()) return false;
-        if(details.getEmail() == null && details.getUsername() == null) return false;
+    public UserDto register(Login details) throws Exception {
+        if(!details.isValidPwd()) return null;
+        if(details.getEmail() == null && details.getUsername() == null) return null;
 
         var username = details.getUsername() == null ?
                 this.getUsernameFromEmail(details.getEmail()) : details.getUsername();
 
         try {
-            this.usersService.register(new UserDto(username, details.getEmail(), null, null), details.getPwd());
+            return this.usersService.register(new UserDto(username, details.getEmail(), null, null), details.getPwd());
         } catch (Exception e) {
             throw new Exception("Ups... something went wrong with your registration.");
         }
 
-        return true;
     }
 
     /**
@@ -38,28 +37,34 @@ public class AuthService implements IAuthService {
      * @return boolean
      */
     @Override
-    public boolean login(Login details) throws Exception {
-        if((details.getEmail() == null && details.getUsername() == null) || details.getPwd() == null) return false;
+    public UserDto login(Login details) throws Exception {
+        if((details.getEmail() == null && details.getUsername() == null) || details.getPwd() == null) return null;
 
         UserDto user = null;
+        boolean isValid = false;
 
         try {
 
-            if(!details.getEmail().isEmpty()) {
+            if(details.getEmail() != null) {
                 user = this.usersService.getByEmail(details.getEmail());
-                if(user == null) return false;
-                return this.usersService.validateCredentialsByEmail(user.getEmail(), details.getPwd());
-            } else if(!details.getUsername().isEmpty()) {
+                if(user == null) return null;
+                isValid = this.usersService.validateCredentialsByEmail(user.getEmail(), details.getPwd());
+
+                if(isValid) return user;
+            } else if(details.getUsername() != null) {
                 user = this.usersService.getByUsername(details.getUsername());
-                if(user == null) return false;
-                return this.usersService.validateCredentialsByUsername(user.getUsername(), details.getPwd());
+                if(user == null) return null;
+
+                isValid = this.usersService.validateCredentialsByUsername(user.getUsername(), details.getPwd());
+
+                if(isValid) return user;
             }
 
         } catch (Exception e) {
             throw new Exception("Ups... something went wrong with your login.");
         }
 
-        return false;
+        return null;
     }
 
     private String getUsernameFromEmail(String email) {
