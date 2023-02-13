@@ -1,6 +1,8 @@
 package io.inab.contacts.controllers;
 
+import io.inab.contacts.domain.dtos.ContactDto;
 import io.inab.contacts.domain.dtos.UserDto;
+import io.inab.contacts.infrastructure.services.ContactsService;
 import io.inab.contacts.infrastructure.services.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -16,11 +18,11 @@ import java.util.HashMap;
 public class ContactsController {
 
     @Autowired
-    private UsersService service;
+    private ContactsService service;
 
     @PostMapping(value = "")
     public ResponseEntity<?> create(
-            @RequestBody(required = true) UserDto body
+            @RequestBody(required = true) ContactDto body
     ) throws Exception {
         try {
             return ResponseEntity.ok(this.service.create(body));
@@ -31,7 +33,7 @@ public class ContactsController {
 
     @PutMapping(value = "")
     public ResponseEntity<?> update(
-            @RequestBody(required = true) UserDto body
+            @RequestBody(required = true) ContactDto body
     ) throws Exception {
         try {
             return ResponseEntity.ok(this.service.update(body));

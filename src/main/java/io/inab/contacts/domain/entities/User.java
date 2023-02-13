@@ -23,7 +23,7 @@ public class User extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private UserDetails details;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Contact> contacts;
 
     public User() {

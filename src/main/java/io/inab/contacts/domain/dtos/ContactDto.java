@@ -26,10 +26,10 @@ public class ContactDto extends BaseDto {
     private String nickName;
 
     @Getter @Setter
-    private List<EmailDto> emails;
+    private String emails;
 
     @Getter @Setter
-    private List<PhoneNumberDto> phoneNumbers;
+    private String phoneNumbers;
 
     @Getter @Setter
     private String address;

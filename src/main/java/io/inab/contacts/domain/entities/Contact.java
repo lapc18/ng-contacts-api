@@ -1,8 +1,11 @@
 package io.inab.contacts.domain.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.inab.contacts.core.abstracts.BaseEntity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -23,11 +26,11 @@ public class Contact extends BaseEntity {
     @Column
     private String nickName;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Email> emails;
+    @Column
+    private String emails;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<PhoneNumber> phoneNumbers;
+    @Column
+    private String phoneNumbers;
 
     @Column
     private String address;
@@ -46,6 +49,12 @@ public class Contact extends BaseEntity {
 
     @Column
     private String company;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private User user;
 
     public Contact() {
     }
@@ -82,19 +91,19 @@ public class Contact extends BaseEntity {
         this.nickName = nickName;
     }
 
-    public List<Email> getEmails() {
+    public String getEmails() {
         return emails;
     }
 
-    public void setEmails(List<Email> emails) {
+    public void setEmails(String emails) {
         this.emails = emails;
     }
 
-    public List<PhoneNumber> getPhoneNumbers() {
+    public String getPhoneNumbers() {
         return phoneNumbers;
     }
 
-    public void setPhoneNumbers(List<PhoneNumber> phoneNumbers) {
+    public void setPhoneNumbers(String phoneNumbers) {
         this.phoneNumbers = phoneNumbers;
     }
 
