@@ -47,7 +47,7 @@ public class AuthController {
             var dto = this.authService.register(login);
             if(dto != null) return ResponseEntity.ok(dto);
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(dto);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (Exception e) {
             var response = new HashMap<String, Object>();
 
