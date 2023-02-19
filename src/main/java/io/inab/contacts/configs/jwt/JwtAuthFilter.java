@@ -1,6 +1,7 @@
 package io.inab.contacts.configs.jwt;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -8,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,6 +52,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throw new IllegalArgumentException("Unable to get JWT Tkn...");
         } catch (ExpiredJwtException e) {
             jwtToken = null;
+        } catch (SignatureException e) {
+            jwtToken = null;
+            username = null;
         }
 
 

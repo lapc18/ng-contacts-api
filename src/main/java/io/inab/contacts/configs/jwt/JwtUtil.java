@@ -4,6 +4,7 @@ package io.inab.contacts.configs.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private int EXPIRATION;
 
-    public String extractUsername(String token) {
+    public String extractUsername(String token) throws SignatureException{
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -35,7 +36,7 @@ public class JwtUtil {
         return claimsResolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims extractAllClaims(String token) throws SignatureException {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
