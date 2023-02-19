@@ -31,10 +31,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
         response.setHeader("Access-Control-Allow-Header","*");
         response.setHeader("Access-Control-Allow-Methods","*");
         response.setHeader("Content-Type","application/json");
+
+        System.out.println("response headers " + response.getHeader("Access-Control-Allow-Origin"));
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         String jwtToken = null;
