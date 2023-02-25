@@ -51,7 +51,7 @@ public class AuthService implements IAuthService {
             final UserDto user = this.usersService.register(new UserDto(username, details.getEmail(), null, null), pwd);
             final String token = this.jwtUtil.generateToken(new UserSecurity(this.mapper.map(user, User.class)));
 
-            return new AuthResponse(user.getUsername(), token);
+            return new AuthResponse(user.getId(), user.getUsername(), user.getEmail(), token);
         } catch (Exception e) {
             throw new AuthException("Ups... something went wrong with your registration.");
         }
@@ -84,7 +84,7 @@ public class AuthService implements IAuthService {
         this.authenticationManager.authenticate(credentials);
         final String token = this.jwtUtil.generateToken(new UserSecurity(this.mapper.map(user, User.class)));
 
-        return new AuthResponse(user.getUsername(), token);
+        return new AuthResponse(user.getId(), user.getUsername(), user.getEmail(), token);
     }
 
     private String getUsernameFromEmail(String email) {

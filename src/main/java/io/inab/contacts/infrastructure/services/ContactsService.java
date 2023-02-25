@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -66,7 +67,14 @@ public class ContactsService implements IService<ContactDto> {
      */
     @Override
     public void softDelete(int id) throws Exception {
+        Optional<Contact> entity = this.repository.findById(id);
+        if(entity.isEmpty()) throw new Exception("No contact found with provided ID!");
 
+        var timestamp = Calendar.getInstance().get(Calendar.DATE);
+        var entityFound = entity.get();
+        entityFound.setDeleted(true);
+        entityFound.setDeletedAt(timestamp);
+        this.repository.save(entityFound);
     }
 
     /**
@@ -75,7 +83,10 @@ public class ContactsService implements IService<ContactDto> {
      */
     @Override
     public void hardDelete(int id) throws Exception {
+        Optional<Contact> p = this.repository.findById(id);
+        if(p.isEmpty()) throw new Exception("Not contact found with provided ID!");
 
+        this.repository.delete(p.get());
     }
 
     /**

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -64,7 +65,14 @@ public class UsersService implements IService<UserDto> {
      */
     @Override
     public void softDelete(int id) throws Exception {
+        Optional<User> entity = this.repository.findById(id);
+        if(entity.isEmpty()) throw new Exception("No user found with provided ID!");
 
+        var timestamp = Calendar.getInstance().get(Calendar.DATE);
+        var entityFound = entity.get();
+        entityFound.setDeleted(true);
+        entityFound.setDeletedAt(timestamp);
+        this.repository.save(entityFound);
     }
 
     /**
@@ -73,7 +81,10 @@ public class UsersService implements IService<UserDto> {
      */
     @Override
     public void hardDelete(int id) throws Exception {
+        Optional<User> p = this.repository.findById(id);
+        if(p.isEmpty()) throw new Exception("Not user found with provided ID!");
 
+        this.repository.delete(p.get());
     }
 
     /**
@@ -150,36 +161,6 @@ public class UsersService implements IService<UserDto> {
             return this.mapper.map(user, UserDto.class);
         } catch (Exception e) {
             throw new Exception("An exception has occurred finding your Entity.", e);
-        }
-    }
-
-    /**
-     * @param email
-     * @return boolean
-     * @throws Exception
-     */
-    public boolean validateCredentialsByEmail(String email, String pwd) throws Exception {
-        if(email.isEmpty() || pwd.isEmpty()) return false;
-        try {
-            var user = this.repository.findByEmail(email);
-            return Objects.equals(user.getPwd(), pwd);
-        } catch (Exception e) {
-            throw new Exception("An exception has occurred validating your credentials.", e);
-        }
-    }
-
-    /**
-     * @param username
-     * @return boolean
-     * @throws Exception
-     */
-    public boolean validateCredentialsByUsername(String username, String pwd) throws Exception {
-        if(username.isEmpty() || pwd.isEmpty()) return false;
-        try {
-            var user = this.repository.findByUsername(username);
-            return Objects.equals(user.getPwd(), pwd);
-        } catch (Exception e) {
-            throw new Exception("An exception has occurred validating your credentials.", e);
         }
     }
 
